@@ -1,0 +1,38 @@
+-T vector
+-T string
+-T ValueType
+-T ReturnType
+
+-bad
+-bap
+-bbb
+-sob
+-sc
+-br
+-ce
+-cdw
+-cli4
+-cbi0
+-nss
+-npcs
+-ncs
+-nbs
+-saf
+-sai
+-saw
+-nprs
+-di8
+-bc
+-nbfda
+-nbfde
+-brs
+-brf
+-ut
+-i4
+-ci2
+-lp
+-ts4
+--ignore-newlines
+--line-length80
+-bbo
+-npsl
