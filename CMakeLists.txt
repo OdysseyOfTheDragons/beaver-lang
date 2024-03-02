@@ -9,15 +9,19 @@ file(GLOB_RECURSE Libs_src CONFIGURE_DEPENDS "Libs/*.c")
 file(GLOB_RECURSE Modules_src CONFIGURE_DEPENDS "Modules/*.c")
 set(SOURCE_FILES ${Core_src} ${Include_src} ${Libs_src} ${Modules_src})
 
+# Files to save
+set(FILES_TO_SAVE ".indent.pro CMakeLists.txt LICENSE README.md Doxyfile **/*.{c,h}")
+
 # Output directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/build)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Add header files
 include_directories(.)
 
 # Compiler flags
-add_compile_options(-Wall -Wextra -pedantic -ansi)
-add_compile_options(-I. -Os -s -O2)
+add_compile_options(-Wall -Wextra -pedantic)
+add_compile_options(-I${CMAKE_BINARY_DIR} -s -O2)
 add_compile_options(-lm)
 
 # Create an executable
@@ -48,12 +52,18 @@ add_custom_target(indent
 
 ### MAIN: archive ###
 add_custom_target(archive
-	COMMAND tar -zcf build/beaver.tar.gz .indent.pro CMakeLists.txt LICENSE README.md Doxyfile **/*.{c,h}
+	COMMAND tar -zcf build/beaver.tar.gz ${FILES_TO_SAVE}
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 ### MAIN: database ###
 add_custom_target(database
 	COMMAND compiledb make run --dry-run
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+### MAIN: cmake ###
+add_custom_target(cmake
+	COMMAND cmake .
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )

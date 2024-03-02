@@ -1,7 +1,8 @@
-#include "vector.h"
+#include "Include/def.h"
 
-struct Vector {
-	void **content;
-	int length;
-	int capacity;
+struct Vector
+{
+  ValueType **content;
+  int length;
+  int capacity;
 };

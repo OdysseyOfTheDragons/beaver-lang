@@ -26,8 +26,8 @@ Here are the specifications:
 
 Maybe some explanations are needed, no?
 
-    At school, we learn the `C` and `OCaml` programming languages. So my language will be built using ONLY these two languages. I think most of the code will be pure `C`, but I may want to use `OCaml` sometimes (even for a single function which would take less than 10 lines in `C`, and which would take 20 in `OCaml` with the interfacing to `C`. But hey, am I dumb or am I not?)
-    The language will be wholly interpreted, but there will be an option to compile: all the normally printed out strings will be stored, put in a dummy `C` program then compiled on the host machine. This is a trick, I know, but if it works, that's what counts.
+At school, we learn the `C` and `OCaml` programming languages. So my language will be built using ONLY these two languages. I think most of the code will be pure `C`, but I may want to use `OCaml` sometimes (even for a single function which would take less than 10 lines in `C`, and which would take 20 in `OCaml` with the interfacing to `C`. But hey, am I dumb or am I not?)
+The language will be wholly interpreted, but there will be an option to compile: all the normally printed out strings will be stored, put in a dummy `C` program then compiled on the host machine. This is a trick, I know, but if it works, that's what counts.
 
 ## Inspirations
 
@@ -98,7 +98,7 @@ An I can also create a `StringType` which holds more than just a `char*` to be f
 typedef struct {
     ArrayType* content;
     int hash;
-};
+} StringType;
 ```
 
 This type has some advantages: the `content` of the string is `vector`, so to add or remove an element is $O(1)$ (constant time). Then the comparison for two strings can first start with the length (constant time access thanks to the use of the `vector`): different lengthes means different strings, then the hash: different hashes means different strings (or should I only compare the hashes?), and if everything is the same, then compare the strings.
