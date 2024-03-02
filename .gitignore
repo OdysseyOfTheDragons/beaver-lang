@@ -1,3 +1,8 @@
+### Project ###
+build
+.hidden
+compile_commands.json
+
 # Created by https://www.toptal.com/developers/gitignore/api/c,ocaml,cmake,vim,visualstudiocode,linux,windows,batch,compressedarchive
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,ocaml,cmake,vim,visualstudiocode,linux,windows,batch,compressedarchive
 
