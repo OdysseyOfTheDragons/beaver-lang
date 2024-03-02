@@ -7,5 +7,5 @@
 /// \param a the first value
 /// \param b the second value
 /// \returns the minimum between both values
-ReturnType* min(ValueType* a, ValueType* b);
+ReturnType *min(ValueType *a, ValueType *b);
 #endif

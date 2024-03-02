@@ -1,7 +1,8 @@
 #include "Include/def.h"
 
-ReturnType* min(ValueType* a, ValueType* b) {
-	ReturnType* ret = (ReturnType*)malloc(sizeof(ReturnType));
+ReturnType *min(ValueType *a, ValueType *b) {
+	ReturnType *ret = (ReturnType *)malloc(sizeof(ReturnType));
+
 	ret->success = true;
 	ret->error = NONE;
 	ret->ret = NULL;
@@ -12,9 +13,12 @@ ReturnType* min(ValueType* a, ValueType* b) {
 		return ret;
 	}
 
-	int int_a, int_b;
-	double double_a, double_b;
-	char *char_a, *char_b;
+	int     int_a,
+	        int_b;
+	double  double_a,
+	        double_b;
+	char   *char_a,
+	       *char_b;
 
 	switch (a->type) {
 		case INT_TYPE:

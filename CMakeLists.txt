@@ -9,61 +9,72 @@ file(GLOB_RECURSE Libs_src CONFIGURE_DEPENDS "Libs/*.c")
 file(GLOB_RECURSE Modules_src CONFIGURE_DEPENDS "Modules/*.c")
 set(SOURCE_FILES ${Core_src} ${Include_src} ${Libs_src} ${Modules_src})
 
-# Files to save
-set(FILES_TO_SAVE ".indent.pro CMakeLists.txt LICENSE README.md Doxyfile **/*.{c,h}")
+# Create an executable
+add_executable(Debug ${SOURCE_FILES})
+add_executable(Beaver ${SOURCE_FILES})
 
 # Output directory
-set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/build)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+set_target_properties(Debug Beaver
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build
+)
 
 # Add header files
 include_directories(.)
 
 # Compiler flags
-add_compile_options(-Wall -Wextra -pedantic)
-add_compile_options(-I${CMAKE_BINARY_DIR} -s -O2)
-add_compile_options(-lm)
+add_compile_options(
+	-Wall -Wextra -pedantic
+	-I${CMAKE_BINARY_DIR} -s -O2 -flto -static
+	-fanalyzer -Wmaybe-uninitialized -Wmisleading-indentation
+	-Wnull-dereference -Wrestrict)
+# add_compile_options(-lm)
 
-# Create an executable
-add_executable(Beaver ${SOURCE_FILES})
+# Specific flags
+target_compile_options(Debug PRIVATE -fsanitize=address -g -ggdb)
+target_link_options(Debug PRIVATE -fsanitize=address -g -ggdb)
 
 # Link -lm
+target_link_libraries(Debug m)
 target_link_libraries(Beaver m)
 
 ### MAIN: run ###
 add_custom_target(run
-	COMMAND Beaver -fsanitize=address -g
-	DEPENDS Beaver
+	COMMAND Debug
+	DEPENDS Debug
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-### MAIN: run-release ###
-add_custom_target(run-release
-	COMMAND Beaver 
+### MAIN: release ###
+add_custom_target(release
+	COMMAND Beaver
+	COMMAND objcopy --strip-all ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Beaver
 	DEPENDS Beaver
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 ### MAIN: indent ###
 add_custom_target(indent
-	COMMAND indent ./**/*.{c,h}
+	COMMAND indent ${SOURCE_FILES}
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 ### MAIN: archive ###
 add_custom_target(archive
-	COMMAND tar -zcf build/beaver.tar.gz ${FILES_TO_SAVE}
+	COMMAND tar
+		--exclude='./.git'
+		--exclude='./CMakeFiles'
+		--exclude='./CMakeCache.txt'
+		--exclude='./cmake_install.cmake'
+		--exclude='./build'
+		--exclude='*~'
+		-zcf build/beaver.tar.gz ./
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
 ### MAIN: database ###
 add_custom_target(database
 	COMMAND compiledb make run --dry-run
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
-
-### MAIN: cmake ###
-add_custom_target(cmake
-	COMMAND cmake .
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
