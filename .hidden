@@ -3,10 +3,17 @@ CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
 
+doxygen_filter.ml
+doxygen_filter
+doxygen_filter.cmo
+doxygen_filter.cmi
+
 compile_commands.json
+docs/doxygen-awesome.css
 
 build
 
 Makefile
 Doxyfile
 LICENSE
+*~

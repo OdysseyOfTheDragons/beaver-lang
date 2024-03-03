@@ -26,7 +26,8 @@ include_directories(.)
 # Compiler flags
 add_compile_options(
 	-Wall -Wextra -pedantic
-	-I${CMAKE_BINARY_DIR} -s -O2 -flto -static
+	-I. -IInclude -IModules -ILibs -ICore
+	-s -O2 -flto -static
 	-fanalyzer -Wmaybe-uninitialized -Wmisleading-indentation
 	-Wnull-dereference -Wrestrict)
 # add_compile_options(-lm)
@@ -54,13 +55,13 @@ add_custom_target(release
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-### MAIN: indent ###
+### STYLE: indent ###
 add_custom_target(indent
 	COMMAND indent ${SOURCE_FILES}
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-### MAIN: archive ###
+### MISC: archive ###
 add_custom_target(archive
 	COMMAND tar
 		--exclude='./.git'
@@ -73,8 +74,21 @@ add_custom_target(archive
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-### MAIN: database ###
+### MISC: database ###
 add_custom_target(database
 	COMMAND compiledb make run --dry-run
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+### DOXYGEN: docs ###
+add_custom_target(docs
+	COMMAND doxygen
+	DEPENDS dox-filter
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+### DOXYGEN: dox-filter ###
+add_custom_target(dox-filter
+	COMMAND ocamlc -I +str str.cma doxygen_filter.ml -o doxygen_filter
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )

@@ -1,7 +1,16 @@
--T vector
--T string
 -T ValueType
 -T ReturnType
+-T IntType
+-T DoubleType
+-T BoolType
+-T StringType
+-T vector
+-T list
+-T stack
+-T queue
+-T dict
+-T binary_tree
+-T polynomial
 
 -bad
 -bap
