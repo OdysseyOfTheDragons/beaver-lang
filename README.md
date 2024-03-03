@@ -27,6 +27,7 @@ Here are the specifications:
 Maybe some explanations are needed, no?
 
 At school, we learn the `C` and `OCaml` programming languages. So my language will be built using ONLY these two languages. I think most of the code will be pure `C`, but I may want to use `OCaml` sometimes (even for a single function that would take less than 10 lines in `C`, and which would take 20 lines in `OCaml` with the interfacing to `C`. But hey, am I dumb or am I not?)
+
 The language will be wholly interpreted, but there will be an option to compile: all the normally printed out strings will be stored, put in a dummy `C` program, and then compiled on the host machine. This is a trick, I know, but if it works, that's what counts.
 
 ## Inspirations
