@@ -14,8 +14,8 @@
 /** @brief A single string. */
 typedef struct StringType {
 	char* content; ///< The content of the string.
-	int length; ///< Length of the string, for access in constant time.
-	int hash; ///< Used to quickly compare two strings.
+	size_t length; ///< Length of the string, for access in constant time.
+	uint64_t hash; ///< Used to quickly compare two strings.
 } StringType;
 
 /** @brief All the different supported types. */
@@ -77,7 +77,6 @@ ValueType* type_empty(const int type, ...);
 
 /**
  * @brief Generates a string object.
- * @todo Add the `hash` variable, based on the real hash of the string.
  * @param value the string to store
  */
 StringType* type_string(char* value);
@@ -168,6 +167,24 @@ void set_double(ValueType* object, const double value);
 char* fetch_string(ValueType* object);
 
 /**
+ * @brief Access the length of the string.
+ * 
+ * @param object the object whose string length is to be extracted
+ * @raise INCORRECT_TYPE object is not of the expected type
+ * @raise INVALID_OBJECT the object is corrupted
+ */
+size_t string_length(ValueType* object);
+
+/**
+ * @brief Access the hash of the string.
+ * 
+ * @param object the object whose string hash is to be extracted
+ * @raise INCORRECT_TYPE object is not of the expected type
+ * @raise INVALID_OBJECT the object is corrupted
+ */
+uint64_t string_hash(ValueType* object);
+
+/**
  * @brief Set a new value to a string.
  * 
  * @param object the object whose value is to be changed
@@ -176,4 +193,14 @@ char* fetch_string(ValueType* object);
  * @raise INVALID_OBJECT the object is corrupted
  */
 void set_string(ValueType* object, char* value);
+
+/**
+ * @brief Checks if object is valid and of expected type.
+ * @param expected the expected type
+ * @param object the object to check
+ * @return whether the object is valid
+ * @raise INCORRECT_TYPE the object is not of expected type
+ * @raise INVALID_OBJECT the object is invalid
+ */
+bool verify_object(const enum TYPES expected, ValueType* object);
 #endif

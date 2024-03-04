@@ -1,8 +1,4 @@
 -T ValueType
--T ReturnType
--T IntType
--T DoubleType
--T BoolType
 -T StringType
 -T vector
 -T list

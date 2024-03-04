@@ -7,9 +7,11 @@
  */
 
 #include "Include/def.h"
+#include "Include/errors.h"
+#include "Include/mathematics.h"
 #include "Include/types.h"
 
-enum TYPES type(ValueType* value) {
+enum TYPES type(ValueType *value) {
 	if (value == NULL) {
 		return -1;
 	}
@@ -17,41 +19,71 @@ enum TYPES type(ValueType* value) {
 	return value->type;
 }
 
-StringType* type_string(char* value) {
-	StringType* val = (StringType*)malloc(sizeof(StringType));
+StringType *type_string(char *value) {
+	StringType *val = (StringType *)malloc(sizeof(StringType));
+
 	val->content = value;
 	val->length = strlen(value);
-	val->hash = 0;
+	val->hash = hash_string(val->content, val->length);
 	return val;
 }
 
-void destroy_string(StringType* object) {
+bool verify_object(const enum TYPES expected, ValueType* object) {
+	errors_reset();
+
+	if (object == NULL) {
+		errors_set(INVALID_OBJECT);
+		return false;
+	}
+
+	if (type(object) != expected) {
+		errors_set(INCORRECT_TYPE);
+		return false;
+	}
+
+	if (expected == STRING_TYPE) {
+		if (object->data.stringValue == NULL) {
+			errors_set(INVALID_OBJECT);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void destroy_string(StringType *object) {
 	free(object->content);
 	free(object);
 }
 
-ValueType* type_empty(const int type, ...) {
+ValueType *type_empty(const int type, ...) {
 	va_list args;
+
 	va_start(args, type);
 
-	ValueType* val = (ValueType*)malloc(sizeof(ValueType));
+	ValueType *val = (ValueType *)malloc(sizeof(ValueType));
+
 	val->type = type;
 
 	switch (type) {
 		case INT_TYPE:
 			val->data.intValue = va_arg(args, int);
+
 			break;
 
 		case BOOL_TYPE:
 			val->data.boolValue = (bool)va_arg(args, int);
+
 			break;
 
 		case DOUBLE_TYPE:
 			val->data.doubleValue = va_arg(args, double);
+
 			break;
 
 		case STRING_TYPE:
-			val->data.stringValue = type_string(va_arg(args, char*));
+			val->data.stringValue = type_string(va_arg(args, char *));
+
 			break;
 
 		default:
@@ -63,7 +95,7 @@ ValueType* type_empty(const int type, ...) {
 	return val;
 }
 
-void destroy_type(ValueType* object) {
+void destroy_type(ValueType *object) {
 	switch (type(object)) {
 		case INT_TYPE:
 		case BOOL_TYPE:
@@ -81,115 +113,56 @@ void destroy_type(ValueType* object) {
 	free(object);
 }
 
-int fetch_int(ValueType* object) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return -1;
-	}
-
-	if (type(object) != INT_TYPE) {
-		errno = INCORRECT_TYPE;
-		return -1;
-	}
-
+int fetch_int(ValueType *object) {
+	if (!verify_object(INT_TYPE, object)) { return 0; }
 	return object->data.intValue;
 }
 
-void set_int(ValueType* object, const int value) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return;
-	}
-
-	if (type(object) != INT_TYPE) {
-		errno = INCORRECT_TYPE;
-		return;
-	}
-
+void set_int(ValueType *object, const int value) {
+	if (!verify_object(INT_TYPE, object)) { return; }
 	object->data.intValue = value;
 }
 
-bool fetch_bool(ValueType* object) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return false;
-	}
-
-	if (type(object) != BOOL_TYPE) {
-		errno = INCORRECT_TYPE;
-		return false;
-	}
-
+bool fetch_bool(ValueType *object) {
+	if (!verify_object(BOOL_TYPE, object)) { return false; }
 	return object->data.boolValue;
 }
 
-void set_bool(ValueType* object, const bool value) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return;
-	}
-
-	if (type(object) != BOOL_TYPE) {
-		errno = INCORRECT_TYPE;
-		return;
-	}
-
+void set_bool(ValueType *object, const bool value) {
+	if (!verify_object(BOOL_TYPE, object)) { return; }
 	object->data.boolValue = value;
 }
 
-
-double fetch_double(ValueType* object) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return 0.0;
-	}
-
-	if (type(object) != DOUBLE_TYPE) {
-		errno = INCORRECT_TYPE;
-		return 0.0;
-	}
-
+double fetch_double(ValueType *object) {
+	if (!verify_object(DOUBLE_TYPE, object)) { return 0.0; }
 	return object->data.doubleValue;
 }
 
-void set_double(ValueType* object, const double value) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return;
-	}
-
-	if (type(object) != DOUBLE_TYPE) {
-		errno = INCORRECT_TYPE;
-		return;
-	}
-
+void set_double(ValueType *object, const double value) {
+	if (!verify_object(DOUBLE_TYPE, object)) { return; }
 	object->data.doubleValue = value;
 }
 
-char* fetch_string(ValueType* object) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return (char*)calloc(1, sizeof(char));
-	}
-
-	if (type(object) != STRING_TYPE) {
-		errno = INCORRECT_TYPE;
-		return (char*)calloc(1, sizeof(char));
-	}
-
+char   *fetch_string(ValueType *object) {
+	if (!verify_object(STRING_TYPE, object)) { return (char*)malloc(sizeof(char)); }
 	return object->data.stringValue->content;
 }
 
-void set_string(ValueType* object, char* value) {
-	if (object == NULL) {
-		errno = INVALID_OBJECT;
-		return;
-	}
+size_t string_length(ValueType* object) {
+	if (!verify_object(STRING_TYPE, object)) { return 0; }
+	else { return object->data.stringValue->length; }
+}
 
-	if (type(object) != STRING_TYPE) {
-		errno = INCORRECT_TYPE;
-		return;
-	}
+uint64_t string_hash(ValueType* object) {
+	if (!verify_object(STRING_TYPE, object)) { return 0; }
+	else { return object->data.stringValue->hash; }
+}
 
-	object->data.stringValue->content = value;
+void set_string(ValueType *object, char *value) {
+	if (!verify_object(STRING_TYPE, object)) { return; }
+
+	StringType* obj = object->data.stringValue;
+	obj->content = value;
+	obj->length = strlen(value);
+	obj->hash = hash_string(obj->content, obj->length);
 }

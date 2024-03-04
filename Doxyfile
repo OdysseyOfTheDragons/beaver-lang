@@ -207,7 +207,7 @@ FILTER_PATTERNS        = *.md='./doxygen_filter' \
 						 *.h='./doxygen_filter'
 FILTER_SOURCE_FILES    = NO
 FILTER_SOURCE_PATTERNS =
-USE_MDFILE_AS_MAINPAGE =
+USE_MDFILE_AS_MAINPAGE = README.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
